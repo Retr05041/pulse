@@ -1,14 +1,39 @@
-Import-Module (Join-Path $PSScriptRoot "api\SpaceTradersApi.psm1") -Force
+Import-Module (Join-Path $PSScriptRoot "SpaceTradersAPI.psm1") -Force
+
 
 function Invoke-ScrapShip {
-    param([Parameter(Mandatory=$true)][string]$ShipSymbol)
 
-    return Invoke-PulseApi -Method "POST" -Path "/my/ships/{shipSymbol}/scrap" -PathParams @{ shipSymbol = $ShipSymbol }
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ShipSymbol,
+
+        [Parameter(Mandatory = $true)]
+        [string]$AgentToken
+    )
+
+    return Invoke-PulseApi `
+        -Method "POST" `
+        -Path "/my/ships/{shipSymbol}/scrap" `
+        -PathParams @{
+            shipSymbol = $ShipSymbol
+        } `
+        -AgentToken $AgentToken
 }
+
 
 function Get-MyShips {
-    return Invoke-PulseApi -Method "GET" -Path "/my/ships"
+
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$AgentToken
+    )
+
+    return Invoke-PulseApi `
+        -Method "GET" `
+        -Path "/my/ships" `
+        -AgentToken $AgentToken
 }
 
 
-Export-ModuleMember -Function Invoke-ScrapShip, Get-MyShips
+Export-ModuleMember `
+    -Function Invoke-ScrapShip, Get-MyShips
