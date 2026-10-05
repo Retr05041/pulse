@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- A .csproj is just MSBuild XML. SDK-style projects auto-include every *.cs / *.xaml
+       under this folder, so there is no file list to maintain. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>                          <!-- WinExe = GUI app, no console window -->
+    <TargetFramework>net8.0-windows</TargetFramework>        <!-- change to net10.0-windows if you have that SDK -->
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>                              <!-- compiler tracks which refs can be null (string vs string?) -->
+    <ImplicitUsings>enable</ImplicitUsings>                  <!-- auto "using System; System.IO; System.Linq; ..." -->
+    <RootNamespace>Pulse</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Source generators for MVVM boilerplate ([ObservableProperty], [RelayCommand]). -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <!-- DPAPI: encrypts data so only this Windows user can decrypt it (replaces your P/Invoke module). -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+</Project>
