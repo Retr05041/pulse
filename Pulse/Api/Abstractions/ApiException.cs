@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace Pulse.Api;
+namespace Pulse.Api.Abstractions;
 
 /// <summary>A SpaceTraders error response, e.g. { "error": { "message": "...", "code": 4000 } }.</summary>
 public sealed class ApiException : Exception

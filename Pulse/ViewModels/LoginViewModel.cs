@@ -50,7 +50,7 @@ public partial class LoginViewModel : ObservableObject
         var client = new SpaceTradersClient(token);
         try
         {
-            var agent = await client.GetAgentAsync();
+            var agent = await client.Agents.GetAgentAsync();
             if (RememberToken) _store.Save(agent.Symbol, token);
             _onLoggedIn(new Session(client, agent));   // ownership of the client passes to the control panel screen
         }

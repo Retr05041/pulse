@@ -34,7 +34,7 @@ public partial class FleetViewModel : ObservableObject, IDisposable
         Status = "Loading fleet...";
         try
         {
-            var ships = await _session.Client.GetShipsAsync();
+            var ships = await _session.Client.Fleet.GetShipsAsync();
             Ships.Clear();
             foreach (var ship in ships) Ships.Add(new ShipViewModel(ship));
             Status = $"{Ships.Count} ship{(Ships.Count == 1 ? "" : "s")}";

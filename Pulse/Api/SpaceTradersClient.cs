@@ -1,8 +1,11 @@
+using Pulse.Api.Abstractions;
+using System.Diagnostics.Contracts;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Pulse.Api.Endpoints;
 
 namespace Pulse.Api;
 
@@ -10,7 +13,7 @@ namespace Pulse.Api;
 /// The only class that talks HTTP. One instance per logged-in agent (it holds the token).
 /// Adding an endpoint = one new line that calls GetAsync / GetAllPagesAsync.
 /// </summary>
-public sealed class SpaceTradersClient : IDisposable
+public sealed class SpaceTradersClient : IApiExecutor, IDisposable
 {
     // Web defaults = camelCase names + case-insensitive matching, which is what the API uses.
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
@@ -20,31 +23,40 @@ public sealed class SpaceTradersClient : IDisposable
     // (The API also allows short bursts; this simple version doesn't exploit them. Check the docs.)
     private readonly RequestScheduler _scheduler = new(TimeSpan.FromMilliseconds(550));
 
+    // Expose domain sub-clients
+    public FleetApi Fleet { get; }
+    public AgentsApi Agents { get; }
+
     public SpaceTradersClient(string token)
     {
         _http = new HttpClient { BaseAddress = new Uri("https://api.spacetraders.io/v2/") };
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Sub-clients receive 'this' as IApiExecutor
+        Fleet = new FleetApi(this);
+        Agents = new AgentsApi(this);
     }
 
-    // ---- Endpoints ----------------------------------------------------------------------
-    public Task<Agent> GetAgentAsync(RequestPriority p = RequestPriority.Interactive)
-        => GetAsync<Agent>("my/agent", p); // Wraps the data in the Agent Model, which will make an object and directly map the json to the arguments
 
-    public Task<List<Ship>> GetShipsAsync(RequestPriority p = RequestPriority.Interactive)
-        => GetAllPagesAsync<Ship>("my/ships", p);
-
-    // ---- Plumbing -----------------------------------------------------------------------
+    // ---- Plumbing (ApiExecutor interface inheritor, so must make these function types) -------------------------------------------------------
 
     // Single resource: queue it, send it, unwrap { "data": ... }.
-    private async Task<T> GetAsync<T>(string path, RequestPriority p)
+    async Task<T> IApiExecutor.GetAsync<T>(string path, RequestPriority p)
     {
         var env = await _scheduler.EnqueueAsync(() => SendAsync<Envelope<T>>(HttpMethod.Get, path), p);
         return env.Data;
     }
 
+    // Single POST: queue it, send payload, unwrap { "data": ... }.
+    async Task<T> IApiExecutor.PostAsync<T>(string path, RequestPriority p, object? body)
+    {
+        var env = await _scheduler.EnqueueAsync(() => SendAsync<Envelope<T>>(HttpMethod.Post, path, body), p);
+        return env.Data;
+    }
+
     // Paged list: keep requesting pages until we have meta.total items. Each page is its own
     // queued request, so an Interactive call can slip in between pages of a Background fetch.
-    private async Task<List<T>> GetAllPagesAsync<T>(string path, RequestPriority p)
+    async Task<List<T>> IApiExecutor.GetAllPagesAsync<T>(string path, RequestPriority p)
     {
         var all = new List<T>();
         for (var page = 1; ; page++)
@@ -68,7 +80,7 @@ public sealed class SpaceTradersClient : IDisposable
 
             if (response.StatusCode == (HttpStatusCode)429 && attempt < 3)
             {
-                // Rate limited anyway: obey Retry-After (default 2s) and try again.
+                // Rate limited anyway: obey Retry-After (default 2s) and try again.a
                 await Task.Delay(response.Headers.RetryAfter?.Delta ?? TimeSpan.FromSeconds(2));
                 continue;
             }
