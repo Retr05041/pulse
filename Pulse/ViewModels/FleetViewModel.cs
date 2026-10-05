@@ -9,7 +9,7 @@ public partial class FleetViewModel : ObservableObject, IDisposable
 {
     private readonly Session _session;
     private readonly PulseService _pulse;
-    private readonly Action _onLogout;
+    private readonly Action _onBack;
 
     public string AgentSymbol => _session.Agent.Symbol;
     public string CreditsText => $"{_session.Agent.Credits:N0} credits";   // TODO: refresh periodically
@@ -17,11 +17,11 @@ public partial class FleetViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] private string _status = "";
 
-    public FleetViewModel(Session session, PulseService pulse, Action onLogout)
+    public FleetViewModel(Session session, PulseService pulse, Action onBack)
     {
         _session = session;
         _pulse = pulse;
-        _onLogout = onLogout;
+        _onBack = onBack;
 
         _pulse.Tick += OnTick;                  // subscribe to the heartbeat
         _ = RefreshAsync();                     // kick off the first load; the UI shows immediately
@@ -43,7 +43,7 @@ public partial class FleetViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void Logout() => _onLogout();
+    private void Back() => _onBack();
 
     private void OnTick(DateTimeOffset now)
     {
@@ -54,6 +54,5 @@ public partial class FleetViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         _pulse.Tick -= OnTick;
-        _session.Client.Dispose();
     }
 }

@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="Pulse.Views.ControlPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Pulse.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Row 0: Header -->
+            <RowDefinition Height="*"/>
+            <!-- Row 1: Dashboard Body -->
+        </Grid.RowDefinitions>
+
+        <!-- HEADER: Agent info & Quick Actions -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,24">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Status}" Style="{StaticResource Small}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <Button Content="Logout" Command="{Binding LogoutCommand}" Style="{StaticResource BadButton}"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="AGENT STATUS" Foreground="{StaticResource Accent}" FontSize="12" FontWeight="Bold"/>
+                <TextBlock Text="{Binding AgentSymbol}" Style="{StaticResource H1}" FontSize="25" Margin="0,4,0,0"/>
+                <TextBlock Text="{Binding CreditsText}" Style="{StaticResource Small}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- DASHBOARD BODY -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Navigation/Modules Row -->
+                <RowDefinition Height="*"/>
+                <!-- Detailed Cards / Overview -->
+            </Grid.RowDefinitions>
+
+            <!-- NAVIGATION MODULE CARDS -->
+            <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,16">
+
+                <!-- Fleet Card (Active) -->
+                <Border Background="{StaticResource Card}" CornerRadius="6" Padding="16" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="FLEET MANAGEMENT" Foreground="{StaticResource Muted}" FontSize="11" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Ships &amp; Commands" Style="{StaticResource H1}" FontSize="16" Margin="0,0,0,8"/>
+                        <TextBlock Text="View active ships, location status, and issue flight plans." Style="{StaticResource Small}" TextWrapping="Wrap" Margin="0,0,0,14"/>
+                        <Button Content="Go to Fleet" Command="{Binding OpenFleetCommand}" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Placeholder 1: Waypoints / Systems -->
+                <Border Background="{StaticResource Card}" CornerRadius="6" Padding="16" Margin="4,0,4,0" Opacity="0.5">
+                    <StackPanel>
+                        <TextBlock Text="NAVIGATION" Foreground="{StaticResource Muted}" FontSize="11" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Systems &amp; Waypoints" Style="{StaticResource H1}" FontSize="16" Margin="0,0,0,8"/>
+                        <TextBlock Text="Explore surrounding star systems and waypoints." Style="{StaticResource Small}" TextWrapping="Wrap" Margin="0,0,0,14"/>
+                        <Button Content="Coming Soon" IsEnabled="False" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Placeholder 2: Contracts / Markets -->
+                <Border Background="{StaticResource Card}" CornerRadius="6" Padding="16" Margin="8,0,0,0" Opacity="0.5">
+                    <StackPanel>
+                        <TextBlock Text="COMMERCE" Foreground="{StaticResource Muted}" FontSize="11" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <TextBlock Text="Contracts &amp; Markets" Style="{StaticResource H1}" FontSize="16" Margin="0,0,0,8"/>
+                        <TextBlock Text="Accept active trade deals and monitor market prices." Style="{StaticResource Small}" TextWrapping="Wrap" Margin="0,0,0,14"/>
+                        <Button Content="Coming Soon" IsEnabled="False" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+
+            </UniformGrid>
+
+            <!-- DASHBOARD WIDGET / SUMMARY AREA -->
+            <Border Grid.Row="1" Background="{StaticResource Card}" CornerRadius="6" Padding="20">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Quick Overview" Style="{StaticResource H1}" FontSize="18" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBlock Text="Select a module above to manage your operations." Style="{StaticResource Small}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>

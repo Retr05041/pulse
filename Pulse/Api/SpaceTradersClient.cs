@@ -28,7 +28,7 @@ public sealed class SpaceTradersClient : IDisposable
 
     // ---- Endpoints ----------------------------------------------------------------------
     public Task<Agent> GetAgentAsync(RequestPriority p = RequestPriority.Interactive)
-        => GetAsync<Agent>("my/agent", p);
+        => GetAsync<Agent>("my/agent", p); // Wraps the data in the Agent Model, which will make an object and directly map the json to the arguments
 
     public Task<List<Ship>> GetShipsAsync(RequestPriority p = RequestPriority.Interactive)
         => GetAllPagesAsync<Ship>("my/ships", p);

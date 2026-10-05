@@ -11,8 +11,18 @@
         <SolidColorBrush x:Key="Card"   Color="#172033"/>
         <SolidColorBrush x:Key="Line"   Color="#334155"/>
         <SolidColorBrush x:Key="Accent" Color="#38BDF8"/>
-        <SolidColorBrush x:Key="Text"   Color="#F8FAFC"/>
+        <SolidColorBrush x:Key="Text"   Color="#8ECAFC"/>
         <SolidColorBrush x:Key="Muted"  Color="#94A3B8"/>
+
+        <!-- Normal Button Colors -->
+        <SolidColorBrush x:Key="NormalButtonBg" Color="#7DD3FC"/>
+        <SolidColorBrush x:Key="NormalButtonHv" Color="#BAE6FD"/>
+        <SolidColorBrush x:Key="NormalButtonCl" Color="#0EA5E9"/>
+
+        <!-- Bad Button Colors -->
+        <SolidColorBrush x:Key="BadButtonBg"    Color="#7B2626"/>
+        <SolidColorBrush x:Key="BadButtonHv"    Color="#FFD62525"/>
+        <SolidColorBrush x:Key="BadButtonCl"    Color="#5A1B1B"/>
 
         <!-- Keyed text styles. (Deliberately NOT an implicit TextBlock style: that would also
              recolour text inside ComboBox popups etc.) -->
@@ -26,18 +36,73 @@
             <Setter Property="FontSize" Value="12"/>
         </Style>
 
-        <!-- Implicit style (no x:Key) = applies to every Button in the app. -->
+        <!-- Default / Normal Button Style (Applies implicitly to all Buttons) -->
         <Style TargetType="Button">
-            <Setter Property="Background" Value="#0EA5E9"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource NormalButtonBg}"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="18,7"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                         Background="{TemplateBinding Background}"
+                         BorderThickness="{TemplateBinding BorderThickness}"
+                         Padding="{TemplateBinding Padding}"
+                         CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover State -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource NormalButtonHv}"/>
+                            </Trigger>
+                            <!-- Clicked / Pressed State -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource NormalButtonCl}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Bad Button Style (Inherits base template and overrides colors) -->
+        <Style x:Key="BadButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{StaticResource BadButtonBg}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                         Background="{TemplateBinding Background}"
+                         BorderThickness="{TemplateBinding BorderThickness}"
+                         Padding="{TemplateBinding Padding}"
+                         CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover State -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource BadButtonHv}"/>
+                            </Trigger>
+                            <!-- Clicked / Pressed State -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource BadButtonCl}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- THE NAVIGATION TRICK: "when you see a LoginViewModel, render it with LoginView".
              The shell window just shows its CurrentView object; WPF picks the matching template. -->
         <DataTemplate DataType="{x:Type vm:LoginViewModel}"><views:LoginView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ControlPanelViewModel}">
+            <views:ControlPanelView/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:FleetViewModel}"><views:FleetView/></DataTemplate>
 
     </Application.Resources>

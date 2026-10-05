@@ -36,6 +36,16 @@ public sealed class CredentialStore
         File.WriteAllText(FilePath, JsonSerializer.Serialize(all));
     }
 
+    public void Remove(string symbol)
+    {
+        var all = Load();
+        if (all.Remove(symbol))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+            File.WriteAllText(FilePath, JsonSerializer.Serialize(all));
+        }
+    }
+
     private static Dictionary<string, string> Load()
     {
         try

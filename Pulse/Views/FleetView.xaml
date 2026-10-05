@@ -12,7 +12,7 @@
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
                 <TextBlock Text="{Binding Status}" Style="{StaticResource Small}" VerticalAlignment="Center" Margin="0,0,14,0"/>
                 <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="0,0,8,0"/>
-                <Button Content="Logout" Command="{Binding LogoutCommand}" Background="{StaticResource Line}"/>
+                <Button Content="Back" Command="{Binding BackCommand}" Background="{StaticResource Line}"/>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="FLEET STATUS" Foreground="{StaticResource Accent}" FontSize="12" FontWeight="Bold"/>

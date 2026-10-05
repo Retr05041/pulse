@@ -15,4 +15,7 @@
     <!-- DPAPI: encrypts data so only this Windows user can decrypt it (replaces your P/Invoke module). -->
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="rocket.ico" />
+  </ItemGroup>
 </Project>

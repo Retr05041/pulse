@@ -7,7 +7,7 @@
             Background="{StaticResource Card}" BorderBrush="{StaticResource Line}"
             BorderThickness="1" CornerRadius="10">
         <StackPanel>
-            <TextBlock Text="P.U.L.S.E." Foreground="{StaticResource Accent}" FontSize="12" FontWeight="Bold"/>
+            <!-- <TextBlock Text="PULSE Control Panel" Foreground="{StaticResource Text}" FontSize="12" FontWeight="Bold"/> -->
             <TextBlock Text="Agent Login" Style="{StaticResource H1}" Margin="0,4,0,18"/>
 
             <TextBlock Text="Saved agents" Style="{StaticResource Small}"/>
@@ -22,7 +22,24 @@
             <CheckBox Content="Remember on this PC (encrypted)" IsChecked="{Binding RememberToken}"
                       Foreground="{StaticResource Muted}" Margin="0,0,0,16"/>
 
-            <Button Content="Connect" Command="{Binding ConnectCommand}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <!-- Spacing between buttons -->
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Primary Action -->
+                <Button Grid.Column="0" Content="Connect" Command="{Binding ConnectCommand}"/>
+
+                <!-- Destructive Action -->
+                <Button Grid.Column="2" Content="Remove Token" 
+                        Command="{Binding RemoveTokenCommand}" 
+                        Style="{StaticResource BadButton}"
+                        Padding="12,7"/>
+            </Grid>
+
             <TextBlock Text="{Binding Status}" Style="{StaticResource Small}" Margin="0,14,0,0" TextWrapping="Wrap"/>
         </StackPanel>
     </Border>

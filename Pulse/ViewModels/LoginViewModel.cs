@@ -9,7 +9,7 @@ namespace Pulse.ViewModels;
 public partial class LoginViewModel : ObservableObject
 {
     private readonly CredentialStore _store;
-    private readonly Action<Session> _onLoggedIn;      // callback into the shell: "we're in, go to the fleet"
+    private readonly Action<Session> _onLoggedIn;      // callback into the shell: "we're in, go to the control panel"
 
     // ObservableCollection notifies the UI when items are added/removed (a plain List doesn't).
     public ObservableCollection<string> SavedAgents { get; }
@@ -17,7 +17,7 @@ public partial class LoginViewModel : ObservableObject
     // These generate Token, SelectedAgent, RememberToken, Status, IsBusy properties.
     // [NotifyCanExecuteChangedFor] re-evaluates the Connect button's enabled state when they change.
     [ObservableProperty, NotifyCanExecuteChangedFor(nameof(ConnectCommand))] private string _token = "";
-    [ObservableProperty] private string? _selectedAgent;
+    [ObservableProperty, NotifyCanExecuteChangedFor(nameof(RemoveTokenCommand))] private string? _selectedAgent;
     [ObservableProperty] private bool _rememberToken = true;
     [ObservableProperty] private string _status = "Pick a saved agent or paste a token.";
     [ObservableProperty, NotifyCanExecuteChangedFor(nameof(ConnectCommand))] private bool _isBusy;
@@ -37,6 +37,8 @@ public partial class LoginViewModel : ObservableObject
 
     private bool CanConnect() => !IsBusy && !string.IsNullOrWhiteSpace(Token);
 
+    private bool CanRemoveToken() => !IsBusy && !string.IsNullOrWhiteSpace(SelectedAgent);
+
     // [RelayCommand] generates "ConnectCommand" (ICommand) for the button to bind to.
     // "async Task" = the UI thread is NOT blocked while awaiting; the window stays responsive.
     [RelayCommand(CanExecute = nameof(CanConnect))]
@@ -50,7 +52,7 @@ public partial class LoginViewModel : ObservableObject
         {
             var agent = await client.GetAgentAsync();
             if (RememberToken) _store.Save(agent.Symbol, token);
-            _onLoggedIn(new Session(client, agent));   // ownership of the client passes to the fleet screen
+            _onLoggedIn(new Session(client, agent));   // ownership of the client passes to the control panel screen
         }
         catch (Exception ex)
         {
@@ -58,5 +60,22 @@ public partial class LoginViewModel : ObservableObject
             Status = ex.Message;
         }
         finally { IsBusy = false; }                    // always runs, success or failure
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRemoveToken))]
+    private void RemoveToken()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedAgent)) return;
+
+        var agentToRemove = SelectedAgent;
+
+        // Remove from file storage & dropdown
+        _store.Remove(agentToRemove);
+        SavedAgents.Remove(agentToRemove);
+
+        // Reset inputs
+        SelectedAgent = null;
+        Token = "";
+        Status = $"Token for '{agentToRemove}' removed.";
     }
 }

@@ -23,14 +23,38 @@ public partial class ShellViewModel : ObservableObject
         ShowLogin();
     }
 
-    private void ShowLogin() =>
-        Navigate(new LoginViewModel(_store, session =>
-            Navigate(new FleetViewModel(session, _pulse, onLogout: ShowLogin))));
+    // On session creation, Navigate to the Control Panel
+    private void ShowLogin() => Navigate(new LoginViewModel(_store, session => ShowControlPanel(session)));
+
+    private void ShowControlPanel(Session session) 
+    {
+        Navigate(new ControlPanelViewModel(
+            session,
+            _pulse,
+            onLogout: () => Logout(session), // passes an Action (a parameterless method callback) to ControlPanelViewModel
+            onOpenFleet: () => ShowFleet(session)
+        ));
+    }
+
+    private void ShowFleet(Session session)
+    {
+        Navigate(new FleetViewModel(
+            session,
+            _pulse,
+            onBack: () => ShowControlPanel(session)
+         ));
+    }
 
     private void Navigate(object viewModel)
     {
         // Dispose the screen we are leaving (unsubscribes from ticks, closes the HTTP client).
         (CurrentView as IDisposable)?.Dispose();
         CurrentView = viewModel;
+    }
+
+    private void Logout(Session session)
+    {
+        session.Client.Dispose(); // Properly close HTTP connection on explicit Logout
+        ShowLogin();
     }
 }

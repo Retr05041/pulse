@@ -1,8 +1,8 @@
 <Window x:Class="Pulse.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="P.U.L.S.E." Width="900" Height="620" MinWidth="700" MinHeight="500"
-        Background="{StaticResource Bg}" WindowStartupLocation="CenterScreen">
+        Title="PULSE" Width="900" Height="620" MinWidth="700" MinHeight="500"
+        Background="{DynamicResource Bg}" WindowStartupLocation="CenterScreen" Icon="/rocket.ico">
     <!-- The single shell. DataContext is a ShellViewModel; this control displays whatever
          ShellViewModel.CurrentView holds, using the DataTemplates declared in App.xaml. -->
     <ContentControl Content="{Binding CurrentView}"/>
