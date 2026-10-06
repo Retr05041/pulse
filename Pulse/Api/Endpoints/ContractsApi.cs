@@ -21,4 +21,7 @@ public class ContractsApi
 
     public Task<Contract> FulfillContractAsync(string contractID, RequestPriority p = RequestPriority.Interactive)
         => _api.PostAsync<Contract>($"my/contracts/{contractID}/fulfill", p);
+
+    public Task<Contract> NegotiateNewContractAsync(string shipSymbol, RequestPriority p = RequestPriority.Interactive)
+        => _api.PostAsync<Contract>($"my/ships/{shipSymbol}/negotiate/contract", p);
 }
