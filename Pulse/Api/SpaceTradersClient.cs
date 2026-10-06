@@ -1,5 +1,4 @@
 using Pulse.Api.Abstractions;
-using System.Diagnostics.Contracts;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -26,6 +25,7 @@ public sealed class SpaceTradersClient : IApiExecutor, IDisposable
     // Expose domain sub-clients
     public FleetApi Fleet { get; }
     public AgentsApi Agents { get; }
+    public ContractsApi Contracts { get;  }
 
     public SpaceTradersClient(string token)
     {
@@ -35,6 +35,7 @@ public sealed class SpaceTradersClient : IApiExecutor, IDisposable
         // Sub-clients receive 'this' as IApiExecutor
         Fleet = new FleetApi(this);
         Agents = new AgentsApi(this);
+        Contracts = new ContractsApi(this);
     }
 
 

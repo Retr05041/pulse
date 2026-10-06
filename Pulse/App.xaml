@@ -104,6 +104,9 @@
             <views:ControlPanelView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:FleetViewModel}"><views:FleetView/></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ContractsViewModel}">
+            <views:ContractsView />
+        </DataTemplate>
 
     </Application.Resources>
 </Application>

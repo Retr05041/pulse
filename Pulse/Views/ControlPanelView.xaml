@@ -60,13 +60,13 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Placeholder 2: Contracts / Markets -->
+                <!-- Placeholder 2: Contracts (Active) -->
                 <Border Background="{StaticResource Card}" CornerRadius="6" Padding="16" Margin="8,0,0,0" Opacity="0.5">
                     <StackPanel>
                         <TextBlock Text="COMMERCE" Foreground="{StaticResource Muted}" FontSize="11" FontWeight="Bold" Margin="0,0,0,4"/>
                         <TextBlock Text="Contracts &amp; Markets" Style="{StaticResource H1}" FontSize="16" Margin="0,0,0,8"/>
                         <TextBlock Text="Accept active trade deals and monitor market prices." Style="{StaticResource Small}" TextWrapping="Wrap" Margin="0,0,0,14"/>
-                        <Button Content="Coming Soon" IsEnabled="False" HorizontalAlignment="Left"/>
+                        <Button Content="Go to Contracts" Command="{Binding OpenContractsCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
 

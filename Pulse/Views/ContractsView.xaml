@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="Pulse.Views.ContractsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Pulse.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Row 0: Header -->
+            <RowDefinition Height="*"/>
+            <!-- Row 1: Dashboard Body -->
+        </Grid.RowDefinitions>
+
+        <!-- HEADER: Agent info & Quick Actions -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,24">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Status}" Style="{StaticResource Small}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <Button Content="Back" Command="{Binding BackCommand}" Background="{StaticResource Line}"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="AGENT STATUS" Foreground="{StaticResource Accent}" FontSize="12" FontWeight="Bold"/>
+                <TextBlock Text="{Binding AgentSymbol}" Style="{StaticResource H1}" FontSize="25" Margin="0,4,0,0"/>
+                <TextBlock Text="{Binding CurrentSystem}" Style="{StaticResource Small}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- BODY: Contracts List -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Contracts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4" Padding="16" Margin="0,0,0,12" Background="#11ffffff">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Left Side: Information -->
+                                <StackPanel Grid.Column="0">
+                                    <!-- Header Row: Type, Faction, Status -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <Border Background="{StaticResource Accent}" CornerRadius="2" Padding="6,2" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Type}" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                                        </Border>
+                                        <TextBlock Text="{Binding FactionSymbol}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                        <!-- Status Badges -->
+                                        <TextBlock Text="ACCEPTED" Foreground="LightGreen" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsAccepted}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Text="FULFILLED" Foreground="Cyan" FontSize="11" FontWeight="Bold" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsFulfilled}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <!-- Deliveries sub-list -->
+                                    <ItemsControl ItemsSource="{Binding Deliveries}" Margin="0,4,0,8">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2">
+                                                    <TextBlock Text="• Deliver " Foreground="Gray"/>
+                                                    <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold"/>
+                                                    <TextBlock Text=" "/>
+                                                    <TextBlock Text="{Binding TradeSymbol}" Foreground="{StaticResource Accent}" FontWeight="Bold"/>
+                                                    <TextBlock Text=" to " Foreground="Gray"/>
+                                                    <TextBlock Text="{Binding DestinationSymbol}" FontWeight="SemiBold"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Deadline & Status -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Pay: " Foreground="Gray"/>
+                                        <TextBlock Text="{Binding PaymentText}" Foreground="LightGreen" Margin="0,0,16,0"/>
+
+                                        <TextBlock Text="Deadline: " Foreground="Gray"/>
+                                        <TextBlock Text="{Binding DeadlineText}"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Right Side: Actions bound directly to ContractViewModel commands -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0,0,0">
+                                    <Button Content="Accept" 
+                                            Command="{Binding AcceptCommand}"
+                                            Margin="0,0,0,4"/>
+                                    <Button Content="Fulfill" 
+                                            Command="{Binding FulfillCommand}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

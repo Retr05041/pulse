@@ -32,7 +32,8 @@ public partial class ShellViewModel : ObservableObject
             session,
             _pulse,
             onLogout: () => Logout(session), // passes an Action (a parameterless method callback) to ControlPanelViewModel
-            onOpenFleet: () => ShowFleet(session)
+            onOpenFleet: () => ShowFleet(session),
+            onOpenContracts: () => ShowContracts(session)
         ));
     }
 
@@ -43,6 +44,15 @@ public partial class ShellViewModel : ObservableObject
             _pulse,
             onBack: () => ShowControlPanel(session)
          ));
+    }
+
+    private void ShowContracts(Session session)
+    {
+        Navigate(new ContractsViewModel(
+            session,
+            _pulse,
+            onBack: () => ShowControlPanel(session)
+        ));
     }
 
     private void Navigate(object viewModel)

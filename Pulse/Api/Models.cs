@@ -14,3 +14,33 @@ public record Nav(string SystemSymbol, string WaypointSymbol, string Status, Rou
 public record Route(DateTimeOffset Arrival);             // when an in-transit ship lands
 public record Fuel(int Current, int Capacity);
 public record Cargo(int Units, int Capacity);
+
+// Top-level Contract model
+public record Contract(
+    string Id,
+    string FactionSymbol,
+    string Type,
+    ContractTerms Terms,
+    bool Accepted,
+    bool Fulfilled,
+    DateTimeOffset DeadlineToAccept
+);
+
+// Inner nested contract objects
+public record ContractTerms(
+    DateTimeOffset Deadline,
+    ContractPayment Payment,
+    IReadOnlyList<ContractDeliver> Deliver
+);
+
+public record ContractPayment(
+    long OnAccepted,
+    long OnFulfilled
+);
+
+public record ContractDeliver(
+    string TradeSymbol,
+    string DestinationSymbol,
+    int UnitsRequired,
+    int UnitsFulfilled
+);

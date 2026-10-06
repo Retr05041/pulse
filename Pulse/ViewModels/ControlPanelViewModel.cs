@@ -15,18 +15,23 @@ public partial class ControlPanelViewModel: ObservableObject
     private readonly PulseService _pulse;
     private readonly Action _onLogout;
     private readonly Action _onOpenFleet;
+    private readonly Action _onOpenContracts;
 
     public string AgentSymbol => _session.Agent.Symbol;
     public string CreditsText => $"{_session.Agent.Credits:N0} credits";   // TODO: refresh periodically
 
     [ObservableProperty] private string _status = "";
 
-    public ControlPanelViewModel(Session session, PulseService pulse, Action onLogout, Action onOpenFleet)
+    public ControlPanelViewModel(Session session, PulseService pulse, 
+        Action onLogout, 
+        Action onOpenFleet, 
+        Action onOpenContracts)
     {
         _session = session; // Session
         _pulse = pulse; // Pulse service handed from ShellView
         _onLogout = onLogout; // What happens on logout
         _onOpenFleet = onOpenFleet; // When "Open Fleet" is selected
+        _onOpenContracts = onOpenContracts;
     }
 
     [RelayCommand]
@@ -34,4 +39,7 @@ public partial class ControlPanelViewModel: ObservableObject
 
     [RelayCommand]
     private void OpenFleet() => _onOpenFleet();
+
+    [RelayCommand]
+    private void OpenContracts() => _onOpenContracts();
 }
