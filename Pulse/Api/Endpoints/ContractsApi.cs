@@ -24,4 +24,17 @@ public class ContractsApi
 
     public Task<Contract> NegotiateNewContractAsync(string shipSymbol, RequestPriority p = RequestPriority.Interactive)
         => _api.PostAsync<Contract>($"my/ships/{shipSymbol}/negotiate/contract", p);
+
+    public Task<DeliverContractResponse> DeliverContractAsync(
+            string contractID,
+            string shipSymbol,
+            string tradeSymbol,
+            int units,
+            RequestPriority p = RequestPriority.Interactive)
+    {
+        var body = new DeliverContractRequest(shipSymbol, tradeSymbol, units);
+
+        // Single generic type T = DeliverContractResponse, passing body as third argument
+        return _api.PostAsync<DeliverContractResponse>($"my/contracts/{contractID}/deliver", p, body);
+    }
 }

@@ -13,7 +13,13 @@ public record Ship(string Symbol, Nav Nav, Fuel Fuel, Cargo Cargo);
 public record Nav(string SystemSymbol, string WaypointSymbol, string Status, Route Route);
 public record Route(DateTimeOffset Arrival);             // when an in-transit ship lands
 public record Fuel(int Current, int Capacity);
-public record Cargo(int Units, int Capacity);
+public record Cargo(int Units, int Capacity, IReadOnlyList<CargoItem> Inventory);
+public record CargoItem(
+    string Symbol,
+    string Name,
+    string Description,
+    int Units
+);
 
 // Top-level Contract model
 public record Contract(
@@ -44,3 +50,22 @@ public record ContractDeliver(
     int UnitsRequired,
     int UnitsFulfilled
 );
+
+// Request payload for delivering contract cargo
+public record DeliverContractRequest(
+    string ShipSymbol,
+    string TradeSymbol,
+    int Units
+);
+
+// Response payload wrapper containing updated contract and ship cargo
+public record DeliverContractResponse(
+    Contract Contract,
+    Cargo Cargo
+);
+
+// Simple record used to display options in the ship dropdown selector
+public record ShipCargoOption(string ShipSymbol, int AvailableUnits, string Waypoint)
+{
+    public string DisplayText => $"{ShipSymbol} ({AvailableUnits} units at {Waypoint})";
+}

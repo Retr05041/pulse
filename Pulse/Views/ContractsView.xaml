@@ -10,14 +10,17 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Row 0: Header -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row 1: Negotiate Bar (CHANGED) -->
             <RowDefinition Height="*"/>
-            <!-- Row 1: Dashboard Body -->
+            <!-- Row 2: Contracts Body -->
         </Grid.RowDefinitions>
 
         <!-- HEADER: Agent info & Quick Actions -->
-        <DockPanel Grid.Row="0" Margin="0,0,0,24">
+        <DockPanel Grid.Row="0" Margin="0,0,0,16">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Status}" Style="{StaticResource Small}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="0,0,8,0"/>
                 <Button Content="Back" Command="{Binding BackCommand}" Background="{StaticResource Line}"/>
             </StackPanel>
             <StackPanel>
@@ -27,8 +30,25 @@
             </StackPanel>
         </DockPanel>
 
+        <!-- Negotiation Strip (New Contract section) -->
+        <Border Grid.Row="1" Background="#1affffff" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4" Padding="12,8" Margin="0,0,0,16">
+            <DockPanel>
+                <TextBlock Text="NEGOTIATE CONTRACT" FontWeight="Bold" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="0,0,16,0"/>
+                <ComboBox ItemsSource="{Binding EligibleNegotiatorShips}" 
+                          DisplayMemberPath="Symbol" 
+                          SelectedValuePath="Symbol"
+                          x:Name="NegotiatorCombo"
+                          Width="180" DockPanel.Dock="Left" Margin="0,0,8,0"/>
+                <Button Content="Negotiate New Contract" 
+                        Command="{Binding NegotiateContractCommand}" 
+                        CommandParameter="{Binding SelectedValue, ElementName=NegotiatorCombo}"
+                        DockPanel.Dock="Left"/>
+                <TextBlock Text="Requires ship docked at faction location" Foreground="Gray" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            </DockPanel>
+        </Border>
+
         <!-- BODY: Contracts List -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Contracts}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -75,24 +95,38 @@
                                         </TextBlock>
                                     </StackPanel>
 
-                                    <!-- Deliveries sub-list -->
+                                    <!-- Deliveries sub-list with cargo selection and delivery action -->
                                     <ItemsControl ItemsSource="{Binding Deliveries}" Margin="0,4,0,8">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" Margin="0,2">
-                                                    <TextBlock Text="• Deliver " Foreground="Gray"/>
-                                                    <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold"/>
-                                                    <TextBlock Text=" "/>
-                                                    <TextBlock Text="{Binding TradeSymbol}" Foreground="{StaticResource Accent}" FontWeight="Bold"/>
-                                                    <TextBlock Text=" to " Foreground="Gray"/>
-                                                    <TextBlock Text="{Binding DestinationSymbol}" FontWeight="SemiBold"/>
+                                                <StackPanel Margin="0,4">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="• Deliver " Foreground="Gray"/>
+                                                        <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold"/>
+                                                        <TextBlock Text=" "/>
+                                                        <TextBlock Text="{Binding TradeSymbol}" Foreground="{StaticResource Accent}" FontWeight="Bold"/>
+                                                        <TextBlock Text=" to " Foreground="Gray"/>
+                                                        <TextBlock Text="{Binding DestinationSymbol}" FontWeight="SemiBold"/>
+                                                    </StackPanel>
+
+                                                    <!-- Delivery Control Row -->
+                                                    <StackPanel Orientation="Horizontal" Margin="12,4,0,0">
+                                                        <ComboBox ItemsSource="{Binding AvailableShips}"
+                                                                  SelectedItem="{Binding SelectedShip}"
+                                                                  DisplayMemberPath="DisplayText"
+                                                                  Width="240" Margin="0,0,8,0"/>
+                                                        <Button Content="Deliver Cargo" 
+                                                                Command="{Binding DeliverCargoCommand}" 
+                                                                Margin="0,0,8,0"/>
+                                                        <TextBlock Text="{Binding DeliveryStatus}" Foreground="Yellow" VerticalAlignment="Center" FontSize="11"/>
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
 
                                     <!-- Deadline & Status -->
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                                         <TextBlock Text="Pay: " Foreground="Gray"/>
                                         <TextBlock Text="{Binding PaymentText}" Foreground="LightGreen" Margin="0,0,16,0"/>
 
@@ -101,7 +135,7 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                <!-- Right Side: Actions bound directly to ContractViewModel commands -->
+                                <!-- Right Side: Main Contract State Actions -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0,0,0">
                                     <Button Content="Accept" 
                                             Command="{Binding AcceptCommand}"

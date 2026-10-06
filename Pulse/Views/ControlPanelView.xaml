@@ -61,7 +61,7 @@
                 </Border>
 
                 <!-- Placeholder 2: Contracts (Active) -->
-                <Border Background="{StaticResource Card}" CornerRadius="6" Padding="16" Margin="8,0,0,0" Opacity="0.5">
+                <Border Background="{StaticResource Card}" CornerRadius="6" Padding="16" Margin="8,0,0,0">
                     <StackPanel>
                         <TextBlock Text="COMMERCE" Foreground="{StaticResource Muted}" FontSize="11" FontWeight="Bold" Margin="0,0,0,4"/>
                         <TextBlock Text="Contracts &amp; Markets" Style="{StaticResource H1}" FontSize="16" Margin="0,0,0,8"/>

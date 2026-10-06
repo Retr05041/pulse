@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Pulse.Api;
 using Pulse.Services;
-using Pulse.Api.Endpoints;
 
 namespace Pulse.ViewModels;
 
@@ -11,6 +11,7 @@ public partial class ContractViewModel : ObservableObject
 {
     private readonly Contract _contract;
     private readonly Session _session;
+    private readonly Func<Task> _onRefreshRequested;
 
     public string Id => _contract.Id;
     public string FactionSymbol => _contract.FactionSymbol;
@@ -27,16 +28,19 @@ public partial class ContractViewModel : ObservableObject
     [ObservableProperty] private string _statusMessage = "";
     [ObservableProperty] private bool _isBusy;
 
-    public ContractViewModel(Contract contract, Session session)
+    // Added session and fleet reference constructor overload
+    public ContractViewModel(Contract contract, Session session, List<Ship> fleet, Func<Task> onRefreshRequested)
     {
         _contract = contract;
         _session = session;
+        _onRefreshRequested = onRefreshRequested;
 
         _isAccepted = contract.Accepted;
         _isFulfilled = contract.Fulfilled;
 
+        // Pass contract ID, session, and fleet down to deliverable items
         Deliveries = contract.Terms.Deliver
-            .Select(d => new DeliverItemViewModel(d))
+            .Select(d => new DeliverItemViewModel(d, contract.Id, _session, fleet, _onRefreshRequested))
             .ToList();
 
         Tick(DateTimeOffset.UtcNow);
@@ -71,6 +75,7 @@ public partial class ContractViewModel : ObservableObject
             var updatedContract = await _session.Client.Contracts.AcceptContractAsync(Id);
             IsAccepted = updatedContract.Accepted;
             StatusMessage = "Accepted";
+            await _onRefreshRequested();
         }
         catch (Exception ex)
         {
@@ -96,6 +101,7 @@ public partial class ContractViewModel : ObservableObject
             var updatedContract = await _session.Client.Contracts.FulfillContractAsync(Id);
             IsFulfilled = updatedContract.Fulfilled;
             StatusMessage = "Fulfilled";
+            await _onRefreshRequested();
         }
         catch (Exception ex)
         {
@@ -109,21 +115,4 @@ public partial class ContractViewModel : ObservableObject
     }
 
     private bool CanFulfill() => IsAccepted && !IsFulfilled && !IsBusy;
-}
-
-public class DeliverItemViewModel
-{
-    private readonly ContractDeliver _deliver;
-
-    public string TradeSymbol => _deliver.TradeSymbol;
-    public string DestinationSymbol => _deliver.DestinationSymbol;
-    public int UnitsRequired => _deliver.UnitsRequired;
-    public int UnitsFulfilled => _deliver.UnitsFulfilled;
-    public double ProgressPercent => UnitsRequired > 0 ? (UnitsFulfilled * 100.0 / UnitsRequired) : 0;
-    public string ProgressText => $"{UnitsFulfilled:N0} / {UnitsRequired:N0}";
-
-    public DeliverItemViewModel(ContractDeliver deliver)
-    {
-        _deliver = deliver;
-    }
 }
